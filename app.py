@@ -11,7 +11,7 @@ app = Flask(__name__)
 #config to update when template changes
 app.config['TEMPLATES_AUTO_RELOAD'] = True
 # Load the model
-model_path = './static/MobileNetV2_model_epoch50.h5'
+model_path = './static/MobileNetV2_model4.h5'
 mode = tf.keras.models.load_model(model_path)
 print('Model loaded. Check http://')
 
@@ -50,8 +50,9 @@ def upload_frame():
             # Call the predict_video function with the processed frames
             predicted_class, confidence = predict_video(list(frames_deque))
             print(predicted_class, confidence,'isworking')
+            newconf = confidence.astype(float)
             # Return the predicted values to the client
-            return jsonify({'status': 'success', 'predicted_class': predicted_class, 'confidence': confidence})
+            return jsonify({'status': 'success', 'predicted_class': predicted_class, 'confidence': newconf})
 
         return jsonify({'status': 'success'})
 
@@ -66,9 +67,12 @@ def predict_video(frames_list):
     print('Predicting video...')
     # Passing the pre-processed frames to the model and get the predicted probabilities.
     predicted_labels_probabilities = mode.predict(np.expand_dims(frames_list, axis=0))[0]
+    # Convert predicted probabilities to a list of floats
+    predicted_probabilities_list = predicted_labels_probabilities.tolist()
 
     # # Get the index of the class with the highest probability.
     predicted_label = np.argmax(predicted_labels_probabilities)
+    confidence=predicted_labels_probabilities[predicted_label]
 
     # # Get the class name using the retrieved index.
     predicted_class_name = CLASSES_LIST[predicted_label]
@@ -76,7 +80,7 @@ def predict_video(frames_list):
     # # Display the predicted class along with the prediction confidence.
    # print(f'Predicted: {predicted_class_name}\nConfidence: {predicted_labels_probabilities[predicted_label]}')
 
-    return predicted_class_name, 0.7
+    return predicted_class_name, confidence
 
 if __name__ == '__main__':
     app.run(debug=True)

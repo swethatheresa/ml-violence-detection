@@ -87,7 +87,7 @@
     <div class="middle">
         <h1 style="color: rgb(228, 228, 228);">DashBoard</h1>
         <video id="videoPlayer" width="340" height="190" controls loop>
-            <source src="static/video/test3.mp4" type="video/mp4">
+            <source src="static/video/V_120.mp4" type="video/mp4">
             Your browser does not support the video tag.
         </video>
 
@@ -95,7 +95,8 @@
 
         <div id="prediction-result">
             <h2>Prediction Result</h2>
-            <p>Predicted Class: <span id="predicted-class">-</span></p>
+            <p>Predicted Class: <span id="predictedClass">-</span></p>
+            <p>Confidence: <span id="confidence">-</span></p>
         </div>
     </div>
 
@@ -121,53 +122,65 @@
 
             // Send the base64-encoded image data to the server
             sendFrameData(frameImageData);
-        }, 500);
+        }, 300);
+
+        // Set the interval for frame capturing (e.g., every 500 milliseconds)
     }
 
     function sendFrameData(frameImageData) {
-        // Send the frame data to the server using an XMLHttpRequest or Fetch API
-        // Adjust the URL and method according to your server-side code
-        fetch('/upload_frame', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ frame_data: frameImageData }),
-        })
-            .then(response => response.json())
-            .then(data => {
-                // Check if the prediction was successful
-                if (data.status === 'success') {
-                    // Update the predicted values in the HTML template
-                    updatePredictionResult(data.predicted_class, data.confidence);
-                } else {
-                    console.error('Error:', data.message);
-                }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-            });
-    }
+    fetch('/upload_frame', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ frame_data: frameImageData }),
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+        return response.json();
+    })
+    .then(data => { console.log(data);
+        // Check if the prediction was successful
+        if (data && data.status === 'success') {
+            // Update the predicted values in the HTML template
+            console.log("Prediction result:", data);
+            updatePredictionResult(data.predicted_class, data.confidence, data.probabilities);
+        } else {
+            console.error('Error:', data); // Log the response for debugging
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+    });
+}
+
 
     // Function to update the predicted values in the HTML template
-    function updatePredictionResult(predictedClass, confidence) {
-        const predictedClassElement = document.getElementById('predicted-class');
-
-        // Update the predicted values
-        predictedClassElement.innerText = predictedClass;
-
-        // Check if violence is detected
-        if (predictedClass.toLowerCase() === 'violence') {
-            // Change the video border color to red
-            console.log("Violence detected");
-            video.style.border = '3px solid red';
-        } else {
-            // Reset the video border color
-            video.style.border = '3px solid green';
-        }
-
-        // Clear the interval once prediction is updated
+    function updatePredictionResult(predictedClass, confidence, probabilities) {
+    // Update your HTML template with the predicted class, confidence, and probabilities
+    // For example:
+    document.getElementById('predictedClass').innerText = predictedClass;
+    document.getElementById('confidence').innerText = confidence.toFixed(2);
+    
+    // Display probabilities (assuming you have an element with id 'probabilities')
+    if (probabilities && probabilities.length > 0) {
+        const probabilitiesList = document.getElementById('probabilities');
+        probabilitiesList.innerHTML = ''; // Clear previous probabilities
+        probabilities.forEach((prob, index) => {
+            const listItem = document.createElement('li');
+            listItem.textContent = `Class ${index}: ${prob}`;
+            probabilitiesList.appendChild(listItem);
+        });
     }
+    const videoPlayer = document.getElementById('videoPlayer');
+    if (predictedClass === 'Violence') {
+        videoPlayer.style.border = '3px solid red'; // Change border to red
+    } else {
+        videoPlayer.style.border = '3px solid green'; // Change border to green for non-violence
+    }
+}
     </script>
 </body>
 
