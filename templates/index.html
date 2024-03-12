@@ -68,6 +68,14 @@
             margin-top: 20px;
             border: 3px solid green;
         }
+        #stream_feed{
+            margin-top: 20px;
+            width: 340px;
+            height: 190px;
+        }
+        #title{
+            color: rgb(228, 228, 228);
+        }
     </style>
 </head>
 
@@ -86,10 +94,19 @@
     </div>
     <div class="middle">
         <h1 style="color: rgb(228, 228, 228);">DashBoard</h1>
-        <video id="videoPlayer" width="340" height="190" controls loop>
-            <source src="static/video/V_120.mp4" type="video/mp4">
+        <video id="videoPlayer" width="340" height="190" autoplay>
             Your browser does not support the video tag.
         </video>
+        <script>
+            navigator.mediaDevices.getUserMedia({ video: true })
+                .then(function(stream) {
+                    var video = document.getElementById('videoPlayer');
+                    video.srcObject = stream;
+                })
+                .catch(function(err) {
+                    console.error('Error accessing camera:', err);
+                });
+        </script>
 
         <canvas id="canvas" width="640" height="360"></canvas>
 
@@ -99,6 +116,7 @@
             <p>Confidence: <span id="confidence">-</span></p>
         </div>
     </div>
+    
 
     <script>
     const video = document.getElementById('videoPlayer');
