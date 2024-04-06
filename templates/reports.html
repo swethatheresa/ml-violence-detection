@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reports</title>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons&amp;text=dashboard,bar_chart_4_bars" rel="stylesheet">    
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@500&family=Poppins:wght@300&display=swap');
+
+        body{
+            overflow-x: hidden;
+            font: 16px 'Poppins', sans-serif;
+            background-color: #000000;
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            justify-content: start;
+            height: 100vh;
+            width: 100vw;
+            margin: 0;
+            padding: 0;
+        }
+        .leftbar{
+            position: fixed;
+            top: 0;
+            bottom: 0;
+            background-color: rgb(46, 45, 45);
+            width: 7%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .search-container {
+            margin-top: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: row;
+        }
+        .search-input {
+            padding: 8px 12px;
+            border-radius: 25px;
+            border: 1px solid #ccc;
+            margin-right: 10px;
+            width: 30%;
+            font-size: 14px;
+            color: white;
+            background-color: rgba(255, 255, 255, 0.1);
+            outline: none;
+            border: 1px solid transparent;
+            transition: border-color 0.3s ease-in-out;
+        }
+        .search-input::placeholder {
+            background-color: transparent;
+            color: white;
+            opacity: 0.8;
+        }
+        .search-input:focus {
+            background-color: rgba(255, 255, 255, 0.2);
+            border-color: #ccc;
+        }
+        .search-button{
+            color: white; 
+            cursor: pointer;
+        }
+        .search-button:hover {
+            color: gray;
+        }
+        .material-symbols-outlined:hover{
+            cursor: pointer;
+        }
+        .material-icons:hover{
+            cursor: pointer;
+        }
+        .l-button{
+            background-color: rgb(46, 45, 45);
+            border: none;
+            color: white;
+            text-align: center;
+            text-decoration: none;
+            font-size: 13px;
+            width: 100%;
+            margin: 0;
+            cursor: pointer;
+            margin-top: 50px;
+            padding: 2px;
+        }
+        .middle{
+            overflow-x: hidden ;
+            margin-left: 7%;
+            background-color: rgb(0, 0, 0);
+            width: 94%;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+        #title{
+            color: rgb(228, 228, 228);
+        }
+        table {
+            width: 80%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            color: white;
+        }
+        th, td {
+            border: 1px solid white;
+            padding: 8px;
+            text-align: center;
+        }
+        th {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+        .pagination {
+            margin-top: 20px;
+            display: flex;
+            list-style-type: none;
+            padding: 0;
+        }
+        .pagination button {
+            color: white;
+            text-decoration: none;
+            padding: 5px 10px;
+            background-color: rgba(255, 255, 255, 0.1);
+            border-radius: 5px;
+            border: none;
+            cursor: pointer;
+            margin-right: 5px;
+        }
+        .pagination button:hover {
+            background-color: rgba(255, 255, 255, 0.2);
+        }
+        .logout-btn {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+        }
+        .logout-btn a {
+            text-decoration: none;
+            color: #fff;
+            background-color: #333;
+            padding: 10px 20px;
+            border-radius: 5px;
+            border: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="leftbar">
+        <div id="dashboardButton"style="display: flex; flex-direction: column; align-items: center; margin-top: 50px;">
+            <span class="material-icons" style="color: white; font-size: 46px;  margin-bottom: -50px;">dashboard</span>
+            <a href="/" class="l-button" >DashBoard</a>
+        </div>
+        <div id="reportsButton" style="display: flex; flex-direction: column; align-items: center; margin-top: 50px; ">
+            <span class="material-symbols-outlined" style="color: white; font-size: 46px; margin-bottom: -50px;">
+                monitoring
+            </span>
+            <a href="/reports" class="l-button" >Reports</a>
+        </div>
+    </div>
+    
+    </div>
+    <div class="middle">
+        <div class="logout-btn">
+            <a href="/logout" class="btn">Logout</a>
+        </div>
+        <h1 style="color: rgb(228, 228, 228);">Reports</h1>
+        <div class="search-container">
+            <input style=" background-color: rgba(255, 255, 255, 0.1);"type="text" id="searchRoomInput" class="search-input" placeholder="Search by room...">
+            <input style=" background-color: rgba(255, 255, 255, 0.1);"type="text" id="searchTimeInput" class="search-input" placeholder="Search by time...">
+            <button style=" background-color: transparent;border: none;" class="search-button" id="searchButton">
+                <span class="material-symbols-outlined" style="font-size: 38px; ">search</span>
+            </button>
+        </div>
+        <table>
+            <thead>
+                <tr>
+                    <th>Image</th>
+                    <th>Room Number</th>
+                    <th>Time</th>
+                </tr>
+            </thead>
+            <tbody id="reportTableBody">
+                <!-- Table rows will be dynamically added here -->
+            </tbody>
+        </table>
+        <div class="pagination" id="pagination"></div>
+    </div>
+
+    <script>
+         document.getElementById('dashboardButton').addEventListener('click', function() {
+            window.location.href = '/';
+        });
+
+        document.getElementById('reportsButton').addEventListener('click', function() {
+            window.location.href = '/reports';
+        });
+
+        let currentPage = 1;
+        let totalPages = 1;
+        const perPage = 4;
+
+        function fetchReports(page) {
+            const searchRoomInput = document.getElementById('searchRoomInput').value;
+            const searchTimeInput = document.getElementById('searchTimeInput').value;
+            let searchParams = '';
+
+            if (searchRoomInput) {
+                searchParams += `room_number=${searchRoomInput}`;
+            }
+            if (searchTimeInput) {
+                searchParams += searchParams ? `&time=${searchTimeInput}` : `time=${searchTimeInput}`;
+            }
+
+            const url = `/details?page=${page}&per_page=${perPage}&${searchParams}`;
+            fetch(url)
+                .then(response => response.json())
+                .then(data => {
+                    const reportTableBody = document.getElementById('reportTableBody');
+                    reportTableBody.innerHTML = ''; 
+                    data.data.forEach(report => {
+                        const row = document.createElement('tr');
+                        const imageCell = document.createElement('td');
+                        const image = document.createElement('img');
+                        image.src = report.image_url;
+                        image.style.width = '150px'; 
+                        image.style.height = 'auto';
+                        const imageLink = document.createElement('a');
+                        imageLink.href = report.image_url;
+                        imageLink.target = '_blank';
+                        imageLink.appendChild(image);
+                        imageCell.appendChild(imageLink);
+                        const roomNumberCell = document.createElement('td');
+                        roomNumberCell.textContent = report.room_number;
+                        const timeCell = document.createElement('td');
+                        timeCell.textContent = report.time;
+                        row.appendChild(imageCell);
+                        row.appendChild(roomNumberCell);
+                        row.appendChild(timeCell);
+                        reportTableBody.appendChild(row);
+                    });
+
+                    totalPages = data.total_pages;
+                    renderPagination(currentPage, totalPages);
+                })
+                .catch(error => console.error('Error fetching reports:', error));
+        }
+
+        function renderPagination(currentPage, totalPages) {
+            const pagination = document.getElementById('pagination');
+            pagination.innerHTML = '';
+
+            const prevButton = document.createElement('button');
+            prevButton.textContent = 'Previous';
+            prevButton.disabled = currentPage === 1;
+            pagination.appendChild(prevButton);
+
+            for (let i = 1; i <= totalPages; i++) {
+                const pageButton = document.createElement('button');
+                pageButton.textContent = i;
+                pageButton.disabled = i === currentPage;
+                pagination.appendChild(pageButton);
+            }
+
+            const nextButton = document.createElement('button');
+            nextButton.textContent = 'Next';
+            nextButton.disabled = currentPage === totalPages;
+            pagination.appendChild(nextButton);
+        }
+
+        document.getElementById('pagination').addEventListener('click', function(event) {
+            if (event.target.tagName === 'BUTTON') {
+                const pageNumber = parseInt(event.target.textContent);
+                if (!isNaN(pageNumber)) {
+                    currentPage = pageNumber;
+                    fetchReports(currentPage);
+                } else if (event.target.textContent === 'Previous' && currentPage > 1) {
+                    currentPage--;
+                    fetchReports(currentPage);
+                } else if (event.target.textContent === 'Next' && currentPage < totalPages) {
+                    currentPage++;
+                    fetchReports(currentPage);
+                }
+            }
+        });
+
+        document.getElementById('searchButton').addEventListener('click', function() {
+            currentPage = 1; 
+            fetchReports(currentPage);
+        });
+
+        fetchReports(currentPage);
+    </script>
+    
+</body>
+</html>
