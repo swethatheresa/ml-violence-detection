@@ -95,6 +95,27 @@
             border-radius: 5px;
             border: none;
         }
+        .alert {
+        padding: 20px;
+        background-color: #f44336; /* Red */
+        color: white;
+        margin-bottom: 15px;
+        }
+
+        .closebtn {
+        margin-left: 15px;
+        color: white;
+        font-weight: bold;
+        float: right;
+        font-size: 22px;
+        line-height: 20px;
+        cursor: pointer;
+        transition: 0.3s;
+        }
+        /* When moving the mouse over the close button */
+        .closebtn:hover {
+        color: black;
+        }
     </style>
 </head>
 
@@ -114,6 +135,10 @@
     <div class="middle">
         <div class="logout-btn">
             <a href="/logout" class="btn">Logout</a>
+        </div>
+        <div id="alertBox" class="alert" style="display: none;">
+            <span class="closebtn" onclick="closeAlertBox()">&times;</span>
+            <strong>Warning!</strong> Violence detected!
         </div>
         <h1 style="color: rgb(228, 228, 228);">DashBoard</h1>
         <video id="videoPlayer" width="340" height="190" autoplay>
@@ -141,11 +166,13 @@
     
 
     <script>
+    const warningSound = new Audio('assets/audio/emergency-alarm.mp3');
 
     const video = document.getElementById('videoPlayer');
     const canvas = document.getElementById('canvas');
     const context = canvas.getContext('2d');
     let predictionInterval;
+    let consectiveViolenceFrames = 0;
 
     video.addEventListener('loadeddata', function () {
         // Start capturing frames when video data is loaded
@@ -191,8 +218,16 @@
             // Update the predicted values in the HTML template
             console.log("Prediction result:", data);
             updatePredictionResult(data.predicted_class, data.confidence, data.probabilities);
-            if (data.predicted_class == 'Violence') {;
+            if (data.predicted_class == 'Violence') {
+                consectiveViolenceFrames++;
+                if(consectiveViolenceFrames >= 2){
                     uploadData(frameImageData); 
+                    warningSound.play();
+                    document.getElementById('alertBox').style.display = 'block';
+                }
+            }
+            else{
+                consectiveViolenceFrames = 0;
             }
         } else {
             console.error('Error:', data);
@@ -257,6 +292,11 @@
         videoPlayer.style.border = '3px solid green'; // Change border to green for non-violence
     }
 }
+        function closeAlertBox() {
+            document.getElementById('alertBox').style.display = 'none';
+            warningSound.pause();
+            warningSound.currentTime = 0; 
+        }
     </script>
 </body>
 
