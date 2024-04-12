@@ -8,20 +8,23 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>DashBoard</title>
-    <link href="https://fonts.googleapis.com/icon?family=Material+Icons&amp;text=dashboard,bar_chart_4_bars" rel="stylesheet">    
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons&amp;text=dashboard,bar_chart_4_bars"
+        rel="stylesheet">
+    <link rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
     <style>
-        
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@500&family=Poppins:wght@300&display=swap');
 
         #prediction-result {
             margin-top: 20px;
             color: rgb(228, 228, 228);
         }
-        #canvas{
+
+        #canvas {
             display: none;
         }
-        .body{
+
+        .body {
             font: 16px 'Poppins', sans-serif;
             background-color: #000000;
             display: flex;
@@ -34,7 +37,8 @@
             padding: 0;
 
         }
-        .leftbar{
+
+        .leftbar {
             background-color: rgb(46, 45, 45);
             width: 7%;
             height: 100vh;
@@ -42,7 +46,8 @@
             flex-direction: column;
             align-items: center;
         }
-        .l-button{
+
+        .l-button {
             background-color: rgb(46, 45, 45);
             border: none;
             color: white;
@@ -55,7 +60,8 @@
             margin-top: 50px;
             padding: 2px;
         }
-        .middle{
+
+        .middle {
             background-color: rgb(0, 0, 0);
             width: 94%;
             height: 100vh;
@@ -64,29 +70,36 @@
             align-items: center;
             justify-content: center;
         }
-        #videoPlayer{
+
+        #videoPlayer #videoPlayer2 {
             margin-top: 20px;
             border: 3px solid green;
         }
-        #stream_feed{
+
+        #stream_feed {
             margin-top: 20px;
             width: 340px;
             height: 190px;
         }
-        #title{
+
+        #title {
             color: rgb(228, 228, 228);
         }
-        .material-symbols-outlined:hover{
+
+        .material-symbols-outlined:hover {
             cursor: pointer;
         }
-        .material-icons:hover{
+
+        .material-icons:hover {
             cursor: pointer;
         }
+
         .logout-btn {
             position: absolute;
             top: 20px;
             right: 20px;
         }
+
         .logout-btn a {
             text-decoration: none;
             color: #fff;
@@ -95,26 +108,29 @@
             border-radius: 5px;
             border: none;
         }
+
         .alert {
-        padding: 20px;
-        background-color: #f44336; /* Red */
-        color: white;
-        margin-bottom: 15px;
+            padding: 20px;
+            background-color: #f44336;
+            /* Red */
+            color: white;
+            margin-bottom: 15px;
         }
 
         .closebtn {
-        margin-left: 15px;
-        color: white;
-        font-weight: bold;
-        float: right;
-        font-size: 22px;
-        line-height: 20px;
-        cursor: pointer;
-        transition: 0.3s;
+            margin-left: 15px;
+            color: white;
+            font-weight: bold;
+            float: right;
+            font-size: 22px;
+            line-height: 20px;
+            cursor: pointer;
+            transition: 0.3s;
         }
+
         /* When moving the mouse over the close button */
         .closebtn:hover {
-        color: black;
+            color: black;
         }
     </style>
 </head>
@@ -123,15 +139,15 @@
     <div class="leftbar">
         <div id="dashboardButton" style="display: flex; flex-direction: column; align-items: center; margin-top: 50px;">
             <span class="material-icons" style="color: white; font-size: 46px;  margin-bottom: -50px;">dashboard</span>
-            <a href="/" class="l-button" >DashBoard</a>
+            <a href="/" class="l-button">DashBoard</a>
         </div>
-        <div id="reportsButton"style="display: flex; flex-direction: column; align-items: center; margin-top: 50px; ">
+        <div id="reportsButton" style="display: flex; flex-direction: column; align-items: center; margin-top: 50px; ">
             <span class="material-symbols-outlined" style="color: white; font-size: 46px; margin-bottom: -50px;">
                 monitoring
             </span>
-            <a href="/reports" class="l-button" >Reports</a>
+            <a href="/reports" class="l-button">Reports</a>
         </div>
-    </div>    
+    </div>
     <div class="middle">
         <div class="logout-btn">
             <a href="/logout" class="btn">Logout</a>
@@ -141,10 +157,15 @@
             <strong>Warning!</strong> Violence detected!
         </div>
         <h1 style="color: rgb(228, 228, 228);">DashBoard</h1>
-        <video id="videoPlayer" width="340" height="190" autoplay>
+        <video id="videoPlayer" width="340" height="190" controls loop>
+            <source src="static/video/test3.mp4" type="video/mp4">
             Your browser does not support the video tag.
         </video>
-        <script>
+        <video id="videoPlayer2" width="340" height="190" controls loop>
+            <source src="static/video/test5.mp4" type="video/mp4">
+            Your browser does not support the video tag.
+        </video>
+        <!-- <script>
             navigator.mediaDevices.getUserMedia({ video: true })
                 .then(function(stream) {
                     var video = document.getElementById('videoPlayer');
@@ -153,7 +174,7 @@
                 .catch(function(err) {
                     console.error('Error accessing camera:', err);
                 });
-        </script>
+        </script> -->
 
         <canvas id="canvas" width="640" height="360"></canvas>
 
@@ -163,139 +184,171 @@
             <p>Confidence: <span id="confidence">-</span></p>
         </div>
     </div>
-    
+
 
     <script>
-    const warningSound = new Audio('assets/audio/emergency-alarm.mp3');
+        const warningSound = new Audio('static/video/alarm.mp3');
 
-    const video = document.getElementById('videoPlayer');
-    const canvas = document.getElementById('canvas');
-    const context = canvas.getContext('2d');
-    let predictionInterval;
-    let consectiveViolenceFrames = 0;
+        const video = document.getElementById('videoPlayer');
+        const video2 = document.getElementById('videoPlayer2');
+        const canvas = document.getElementById('canvas');
+        const context = canvas.getContext('2d');
+        let predictionInterval;
+        let consectiveViolenceFrames = 0;
 
-    video.addEventListener('loadeddata', function () {
-        // Start capturing frames when video data is loaded
-        captureFrames();
-    });
-    document.getElementById('dashboardButton').addEventListener('click', function() {
-        location.replace('/');
-    });
+        video.addEventListener('loadeddata', function () {
+            // Start capturing frames when video data is loaded
+            captureFrames('vid1');
+        });
+        video2.addEventListener('loadeddata', function () {
+            // Start capturing frames when video data is loaded
+            captureFrames('vid2');
+        });
+        document.getElementById('dashboardButton').addEventListener('click', function () {
+            location.replace('/');
+        });
 
-    document.getElementById('reportsButton').addEventListener('click', function() {
-        location.replace('/reports');
-    });
-    function captureFrames() {
-        predictionInterval = setInterval(function () {
-            // Draw the current frame onto the canvas
-            context.drawImage(video, 0, 0, canvas.width, canvas.height);
+        document.getElementById('reportsButton').addEventListener('click', function () {
+            location.replace('/reports');
+        });
+        function captureFrames(vidno) {
+            predictionInterval = setInterval(function () {
+                // Draw the current frame onto the canvas
+                if(vidno == 'vid1')
+                {
+                    context.drawImage(video, 0, 0, canvas.width, canvas.height);
+                }
+                else
+                {
+                    context.drawImage(video2, 0, 0, canvas.width, canvas.height);
+                }
+                // context.drawImage(video, 0, 0, canvas.width, canvas.height);
 
-            // Get the base64-encoded image data of the captured frame
-            const frameImageData = canvas.toDataURL('image/jpeg').split(',')[1];
+                // Get the base64-encoded image data of the captured frame
+                const frameImageData = canvas.toDataURL('image/jpeg').split(',')[1];
 
-            // Send the base64-encoded image data to the server
-            sendFrameData(frameImageData);
-        }, 300);
-    }
-
-    function sendFrameData(frameImageData) {
-    fetch('/upload_frame', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ frame_data: frameImageData }),
-    })
-    .then(response => {
-        if (!response.ok) {
-            throw new Error('Network response was not ok');
+                // Send the base64-encoded image data to the server
+                sendFrameData(frameImageData,vidno);
+            }, 300);
         }
-        return response.json();
-    })
-    .then(data => { console.log(data);
-        // Check if the prediction was successful
-        if (data && data.status === 'success') {
-            // Update the predicted values in the HTML template
-            console.log("Prediction result:", data);
-            updatePredictionResult(data.predicted_class, data.confidence, data.probabilities);
-            if (data.predicted_class == 'Violence') {
-                consectiveViolenceFrames++;
-                if(consectiveViolenceFrames >= 2){
-                    uploadData(frameImageData); 
-                    warningSound.play();
-                    document.getElementById('alertBox').style.display = 'block';
+
+        function sendFrameData(frameImageData,vidno) {
+            fetch('/upload_frame', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ frame_data: frameImageData }),
+            })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    console.log(data);
+                    // Check if the prediction was successful
+                    if (data && data.status === 'success') {
+                        // Update the predicted values in the HTML template
+                        console.log("Prediction result:", data);
+                        updatePredictionResult(data.predicted_class, data.confidence, data.probabilities,vidno);
+                        if (data.predicted_class == 'Violence') {
+                            consectiveViolenceFrames++;
+                            if (consectiveViolenceFrames >= 2) {
+                                uploadData(frameImageData);
+                                warningSound.play();
+                                document.getElementById('alertBox').style.display = 'block';
+                            }
+                        }
+                        else {
+                            consectiveViolenceFrames = 0;
+                        }
+                    } else {
+                        console.error('Error:', data);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
+
+            function uploadData(frameImageData) {
+                const roomNumber = 'Room 103'
+                const time = new Date().toISOString();
+
+                fetch('/upload', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        frame_data: frameImageData,
+                        room_number: roomNumber,
+                        time: time
+                    }),
+                })
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('Network response was not ok');
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        console.log('Data uploaded successfully:', data);
+                    })
+                    .catch(error => {
+                        console.error('Error uploading data:', error);
+                    });
+            }
+        }
+
+
+        // Function to update the predicted values in the HTML template
+        function updatePredictionResult(predictedClass, confidence, probabilities,vidno) {
+            // Update your HTML template with the predicted class, confidence, and probabilities
+            // For example:
+            document.getElementById('predictedClass').innerText = predictedClass;
+            document.getElementById('confidence').innerText = confidence.toFixed(2);
+
+            // Display probabilities (assuming you have an element with id 'probabilities')
+            if (probabilities && probabilities.length > 0) {
+                const probabilitiesList = document.getElementById('probabilities');
+                probabilitiesList.innerHTML = ''; // Clear previous probabilities
+                probabilities.forEach((prob, index) => {
+                    const listItem = document.createElement('li');
+                    listItem.textContent = `Class ${index}: ${prob}`;
+                    probabilitiesList.appendChild(listItem);
+                });
+            }
+            if(vidno == 'vid1')
+            {
+                const videoPlayer = document.getElementById('videoPlayer');
+                if (predictedClass === 'Violence') {
+                    videoPlayer.style.border = '3px solid red'; // Change border to red
+                } else {
+                    videoPlayer.style.border = '3px solid green'; // Change border to green for non-violence
                 }
             }
-            else{
-                consectiveViolenceFrames = 0;
+            else
+            {
+                const videoPlayer = document.getElementById('videoPlayer2');
+                if (predictedClass === 'Violence') {
+                    videoPlayer.style.border = '3px solid red'; // Change border to red
+                } else {
+                    videoPlayer.style.border = '3px solid green'; // Change border to green for non-violence
+                }
             }
-        } else {
-            console.error('Error:', data);
+            // const videoPlayer = document.getElementById('videoPlayer');
+            // if (predictedClass === 'Violence') {
+            //     videoPlayer.style.border = '3px solid red'; // Change border to red
+            // } else {
+            //     videoPlayer.style.border = '3px solid green'; // Change border to green for non-violence
+            // }
         }
-    })
-    .catch(error => {
-        console.error('Error:', error);
-    });
-
-    function uploadData(frameImageData) {
-        const roomNumber = 'Room 103'
-        const time = new Date().toISOString();
-
-        fetch('/upload', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ 
-                frame_data: frameImageData,
-                room_number: roomNumber,
-                time: time
-            }),
-        })
-        .then(response => {
-            if (!response.ok) {
-                throw new Error('Network response was not ok');
-            }
-            return response.json();
-        })
-        .then(data => {
-            console.log('Data uploaded successfully:', data);
-        })
-        .catch(error => {
-            console.error('Error uploading data:', error);
-        });
-    }
-}
-
-
-    // Function to update the predicted values in the HTML template
-    function updatePredictionResult(predictedClass, confidence, probabilities) {
-    // Update your HTML template with the predicted class, confidence, and probabilities
-    // For example:
-    document.getElementById('predictedClass').innerText = predictedClass;
-    document.getElementById('confidence').innerText = confidence.toFixed(2);
-    
-    // Display probabilities (assuming you have an element with id 'probabilities')
-    if (probabilities && probabilities.length > 0) {
-        const probabilitiesList = document.getElementById('probabilities');
-        probabilitiesList.innerHTML = ''; // Clear previous probabilities
-        probabilities.forEach((prob, index) => {
-            const listItem = document.createElement('li');
-            listItem.textContent = `Class ${index}: ${prob}`;
-            probabilitiesList.appendChild(listItem);
-        });
-    }
-    const videoPlayer = document.getElementById('videoPlayer');
-    if (predictedClass === 'Violence') {
-        videoPlayer.style.border = '3px solid red'; // Change border to red
-    } else {
-        videoPlayer.style.border = '3px solid green'; // Change border to green for non-violence
-    }
-}
         function closeAlertBox() {
             document.getElementById('alertBox').style.display = 'none';
             warningSound.pause();
-            warningSound.currentTime = 0; 
+            warningSound.currentTime = 0;
         }
     </script>
 </body>
