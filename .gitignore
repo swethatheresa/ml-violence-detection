@@ -1,6 +1,8 @@
 mymodel
 __pycache__
-static
+static/uploads
+static/MobileNetV2_model_epoch50.h5
+static/MobileNetV2_model4.h5
 env
 ```
 venv

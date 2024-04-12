@@ -19,6 +19,10 @@
             margin-top: 20px;
             color: rgb(228, 228, 228);
         }
+        #prediction-result2{
+            margin-top: 20px;
+            color: rgb(228, 228, 228);
+        }
 
         #canvas {
             display: none;
@@ -132,6 +136,27 @@
         .closebtn:hover {
             color: black;
         }
+        .videoContainer {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .videoContainer > div {
+            text-align: center;
+            margin: 0 10px;
+        }
+        .videoContainer video {
+            width: 340px;
+            height: 190px;
+            margin-bottom: 10px;
+        }
+        .header {
+            color: white;
+            font-size: 20px;
+            font-weight: bold;
+            margin-bottom: 10px;
+            text-align: center;
+        }
     </style>
 </head>
 
@@ -154,18 +179,36 @@
         </div>
         <div id="alertBox" class="alert" style="display: none;">
             <span class="closebtn" onclick="closeAlertBox()">&times;</span>
-            <strong>Warning!</strong> Violence detected!
+            <strong>Warning!</strong> Violence detected! in <span id="roomNumberDetected"></span>
         </div>
         <h1 style="color: rgb(228, 228, 228);">DashBoard</h1>
-        <video id="videoPlayer" width="340" height="190" controls loop>
-            <source src="static/video/test3.mp4" type="video/mp4">
-            Your browser does not support the video tag.
-        </video>
-        <video id="videoPlayer2" width="340" height="190" controls loop>
-            <source src="static/video/test5.mp4" type="video/mp4">
-            Your browser does not support the video tag.
-        </video>
-        <!-- <script>
+        <div class="videoContainer">
+            <div>
+                <div class="header">Room Number: 101</div>
+                <video id="videoPlayer" width="340" height="190" autoplay >
+                    <source type="video/mp4">
+                    Your browser does not support the video tag.
+                </video>
+                <div id="prediction-result">
+                    <h2>Prediction Result</h2>
+                    <p>Predicted Class: <span id="predictedClass">-</span></p>
+                    <p>Confidence: <span id="confidence">-</span></p>
+                </div>
+            </div>
+            <div>
+                <div class="header">Room Number: 102</div>
+                <video id="videoPlayer2" width="340" height="190" autoplay loop>
+                    <source src="static/video/test4.mp4" type="video/mp4">
+                    Your browser does not support the video tag.
+                </video>
+                <div id="prediction-result2">
+                    <h2>Prediction Result</h2>
+                    <p>Predicted Class: <span id="predictedClass2">-</span></p>
+                    <p>Confidence: <span id="confidence2">-</span></p>
+                </div>
+            </div>
+        </div>
+        <script>
             navigator.mediaDevices.getUserMedia({ video: true })
                 .then(function(stream) {
                     var video = document.getElementById('videoPlayer');
@@ -174,27 +217,24 @@
                 .catch(function(err) {
                     console.error('Error accessing camera:', err);
                 });
-        </script> -->
+        </script>
 
         <canvas id="canvas" width="640" height="360"></canvas>
 
-        <div id="prediction-result">
-            <h2>Prediction Result</h2>
-            <p>Predicted Class: <span id="predictedClass">-</span></p>
-            <p>Confidence: <span id="confidence">-</span></p>
-        </div>
+    
     </div>
 
 
     <script>
-        const warningSound = new Audio('static/video/alarm.mp3');
+        const warningSound = new Audio('static/assets/audio/emergency-alarm.mp3');
 
         const video = document.getElementById('videoPlayer');
         const video2 = document.getElementById('videoPlayer2');
         const canvas = document.getElementById('canvas');
         const context = canvas.getContext('2d');
         let predictionInterval;
-        let consectiveViolenceFrames = 0;
+        let consectiveViolenceFrames1 = 0;
+        let consectiveViolenceFrames2 = 0;
 
         video.addEventListener('loadeddata', function () {
             // Start capturing frames when video data is loaded
@@ -254,15 +294,37 @@
                         console.log("Prediction result:", data);
                         updatePredictionResult(data.predicted_class, data.confidence, data.probabilities,vidno);
                         if (data.predicted_class == 'Violence') {
-                            consectiveViolenceFrames++;
-                            if (consectiveViolenceFrames >= 2) {
-                                uploadData(frameImageData);
+                            if(vidno == 'vid1')
+                            {
+                                consectiveViolenceFrames1++;
+                            }
+                            else
+                            {
+                                consectiveViolenceFrames2++;
+                            }
+                            if (consectiveViolenceFrames1 >= 2 || consectiveViolenceFrames2 >= 2) {
+                                uploadData(frameImageData,vidno);
                                 warningSound.play();
+                                if(vidno == 'vid1')
+                                {
+                                    document.getElementById('roomNumberDetected').innerText = 'Room 101';
+                                }
+                                else
+                                {
+                                    document.getElementById('roomNumberDetected').innerText = 'Room 102';
+                                }
                                 document.getElementById('alertBox').style.display = 'block';
                             }
                         }
                         else {
-                            consectiveViolenceFrames = 0;
+                            if(vidno == 'vid1')
+                            {
+                                consectiveViolenceFrames1 = 0;
+                            }
+                            else
+                            {
+                                consectiveViolenceFrames2 = 0;
+                            }
                         }
                     } else {
                         console.error('Error:', data);
@@ -272,10 +334,30 @@
                     console.error('Error:', error);
                 });
 
-            function uploadData(frameImageData) {
-                const roomNumber = 'Room 103'
-                const time = new Date().toISOString();
+            function uploadData(frameImageData,vidno) {
+                var roomNumber = '';
+                if(vidno == 'vid1')
+                {
+                    roomNumber = 'Room 101'
+                }
+                else
+                {
+                    roomNumber = 'Room 102'
+                }
+                var currentDate = new Date();
+                var formattedDate = currentDate.toLocaleDateString('en-GB', {
+                    day: '2-digit',
+                    month: '2-digit',
+                    year: 'numeric'
+                }).replace(/\//g, '_');
+                var formattedTime = currentDate.toLocaleTimeString('en-US', {
+                    hour12: false,
+                    hour: '2-digit',
+                    minute: '2-digit',
+                    second: '2-digit'
+                });
 
+                var time = formattedDate + ' ' + formattedTime;
                 fetch('/upload', {
                     method: 'POST',
                     headers: {
@@ -302,26 +384,12 @@
             }
         }
 
-
-        // Function to update the predicted values in the HTML template
         function updatePredictionResult(predictedClass, confidence, probabilities,vidno) {
-            // Update your HTML template with the predicted class, confidence, and probabilities
-            // For example:
-            document.getElementById('predictedClass').innerText = predictedClass;
-            document.getElementById('confidence').innerText = confidence.toFixed(2);
-
-            // Display probabilities (assuming you have an element with id 'probabilities')
-            if (probabilities && probabilities.length > 0) {
-                const probabilitiesList = document.getElementById('probabilities');
-                probabilitiesList.innerHTML = ''; // Clear previous probabilities
-                probabilities.forEach((prob, index) => {
-                    const listItem = document.createElement('li');
-                    listItem.textContent = `Class ${index}: ${prob}`;
-                    probabilitiesList.appendChild(listItem);
-                });
-            }
+        
             if(vidno == 'vid1')
             {
+                document.getElementById('predictedClass').innerText = predictedClass;
+                document.getElementById('confidence').innerText = confidence.toFixed(2);
                 const videoPlayer = document.getElementById('videoPlayer');
                 if (predictedClass === 'Violence') {
                     videoPlayer.style.border = '3px solid red'; // Change border to red
@@ -331,6 +399,8 @@
             }
             else
             {
+                document.getElementById('predictedClass2').innerText = predictedClass;
+                document.getElementById('confidence2').innerText = confidence.toFixed(2);
                 const videoPlayer = document.getElementById('videoPlayer2');
                 if (predictedClass === 'Violence') {
                     videoPlayer.style.border = '3px solid red'; // Change border to red
@@ -338,12 +408,6 @@
                     videoPlayer.style.border = '3px solid green'; // Change border to green for non-violence
                 }
             }
-            // const videoPlayer = document.getElementById('videoPlayer');
-            // if (predictedClass === 'Violence') {
-            //     videoPlayer.style.border = '3px solid red'; // Change border to red
-            // } else {
-            //     videoPlayer.style.border = '3px solid green'; // Change border to green for non-violence
-            // }
         }
         function closeAlertBox() {
             document.getElementById('alertBox').style.display = 'none';
