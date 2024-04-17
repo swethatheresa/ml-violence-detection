@@ -1,0 +1,405 @@
+<!-- index.html -->
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DashBoard</title>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons&amp;text=dashboard,bar_chart_4_bars"
+        rel="stylesheet">
+    <link rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@500&family=Poppins:wght@300&display=swap');
+
+        #prediction-result {
+            margin-top: 20px;
+            color: rgb(228, 228, 228);
+        }
+        #prediction-result2{
+            margin-top: 20px;
+            color: rgb(228, 228, 228);
+        }
+
+        #canvas {
+            display: none;
+        }
+
+        .body {
+            font: 16px 'Poppins', sans-serif;
+            background-color: #000000;
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            justify-content: start;
+            height: 100vh;
+            width: 100vw;
+            margin: 0;
+            padding: 0;
+
+        }
+
+        .leftbar {
+            background-color: rgb(46, 45, 45);
+            width: 7%;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .l-button {
+            background-color: rgb(46, 45, 45);
+            border: none;
+            color: white;
+            text-align: center;
+            text-decoration: none;
+            font-size: 13px;
+            width: 100%;
+            margin: 0;
+            cursor: pointer;
+            margin-top: 50px;
+            padding: 2px;
+        }
+
+        .middle {
+            background-color: rgb(0, 0, 0);
+            width: 94%;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        #videoPlayer #videoPlayer2 {
+            margin-top: 20px;
+            border: 3px solid green;
+        }
+
+        #stream_feed {
+            margin-top: 20px;
+            width: 340px;
+            height: 190px;
+        }
+
+        #title {
+            color: rgb(228, 228, 228);
+        }
+
+        .material-symbols-outlined:hover {
+            cursor: pointer;
+        }
+
+        .material-icons:hover {
+            cursor: pointer;
+        }
+
+        .logout-btn {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+        }
+
+        .logout-btn a {
+            text-decoration: none;
+            color: #fff;
+            background-color: #333;
+            padding: 10px 20px;
+            border-radius: 5px;
+            border: none;
+        }
+
+        .alert {
+            padding: 20px;
+            background-color: #f44336;
+            /* Red */
+            color: white;
+            margin-bottom: 15px;
+        }
+
+        .closebtn {
+            margin-left: 15px;
+            color: white;
+            font-weight: bold;
+            float: right;
+            font-size: 22px;
+            line-height: 20px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        /* When moving the mouse over the close button */
+        .closebtn:hover {
+            color: black;
+        }
+        .videoContainer {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .videoContainer > div {
+            text-align: center;
+            margin: 0 10px;
+        }
+        .videoContainer video {
+            width: 340px;
+            height: 190px;
+            margin-bottom: 10px;
+        }
+        .header {
+            color: white;
+            font-size: 20px;
+            font-weight: bold;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+    </style>
+</head>
+
+<body class="body">
+    <div class="leftbar">
+        <div id="dashboardButton" style="display: flex; flex-direction: column; align-items: center; margin-top: 50px;">
+            <span class="material-icons" style="color: white; font-size: 46px;  margin-bottom: -50px;">dashboard</span>
+            <a href="/" class="l-button">DashBoard</a>
+        </div>
+        <div id="reportsButton" style="display: flex; flex-direction: column; align-items: center; margin-top: 50px; ">
+            <span class="material-symbols-outlined" style="color: white; font-size: 46px; margin-bottom: -50px;">
+                monitoring
+            </span>
+            <a href="/reports" class="l-button">Reports</a>
+        </div>
+    </div>
+    <div class="middle">
+        <div class="logout-btn">
+            <a href="/logout" class="btn">Logout</a>
+        </div>
+        <div id="alertBox" class="alert" style="display: none;">
+            <span class="closebtn" onclick="closeAlertBox()">&times;</span>
+            <strong>Warning!</strong> Violence detected! in <span id="roomNumberDetected"></span>
+        </div>
+        <h1 style="color: rgb(228, 228, 228);">DashBoard</h1>
+        <div class="videoContainer">
+            <div>
+                <div class="header">Room Number: 101</div>
+                <video id="videoPlayer" width="340" height="190" autoplay>
+                    <source type="video/mp4">
+                    Your browser does not support the video tag.
+                </video>
+                <div id="prediction-result">
+                    <h2>Prediction Result</h2>
+                    <p>Predicted Class: <span id="predictedClass">-</span></p>
+                    <p>Confidence: <span id="confidence">-</span></p>
+                </div>
+            </div>
+            <div>
+                <div class="header">Room Number: 102</div>
+                <video id="videoPlayer2" width="340" height="190" autoplay loop>
+                    <source src="static/video/test3.mp4" type="video/mp4">
+                    Your browser does not support the video tag.
+                </video>
+                <div id="prediction-result2">
+                    <h2>Prediction Result</h2>
+                    <p>Predicted Class: <span id="predictedClass2">-</span></p>
+                    <p>Confidence: <span id="confidence2">-</span></p>
+                </div>
+            </div>
+        </div>
+        <script>
+            navigator.mediaDevices.getUserMedia({ video: true })
+                .then(function(stream) {
+                    var video = document.getElementById('videoPlayer');
+                    video.srcObject = stream;
+                })
+                .catch(function(err) {
+                    console.error('Error accessing camera:', err);
+                });
+        </script>
+
+        <canvas id="canvas" width="640" height="360"></canvas>
+
+    
+    </div>
+
+
+    <script>
+        const warningSound = new Audio('static/assets/audio/emergency-alarm.mp3');
+
+        const video = document.getElementById('videoPlayer');
+        const video2 = document.getElementById('videoPlayer2');
+        const canvas = document.getElementById('canvas');
+        const context = canvas.getContext('2d');
+        const lastAlertTime = {};
+        let predictionInterval;
+        let lastAlert1 = null;
+        let lastAlert2 = null;
+        let consectiveViolenceFrames1 = 0;
+        let consectiveViolenceFrames2 = 0;
+
+
+        video.addEventListener('loadeddata', function () {
+            // Start capturing frames when video data is loaded
+            captureFrames('vid1');
+        });
+        video2.addEventListener('loadeddata', function () {
+            // Start capturing frames when video data is loaded
+            captureFrames('vid2');
+        });
+        document.getElementById('dashboardButton').addEventListener('click', function () {
+            location.replace('/');
+        });
+
+        document.getElementById('reportsButton').addEventListener('click', function () {
+            location.replace('/reports');
+        });
+        function captureFrames(vidno) {
+            predictionInterval = setInterval(function () {
+                // Draw the current frame onto the canvas
+                if(vidno == 'vid1')
+                {
+                    context.drawImage(video, 0, 0, canvas.width, canvas.height);
+                }
+                else
+                {
+                    context.drawImage(video2, 0, 0, canvas.width, canvas.height);
+                }
+                // context.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+                // Get the base64-encoded image data of the captured frame
+                const frameImageData = canvas.toDataURL('image/jpeg').split(',')[1];
+
+                // Send the base64-encoded image data to the server
+                sendFrameData(frameImageData,vidno);
+            }, 300);
+        }
+
+    function sendFrameData(frameImageData, vidno) {
+        const roomNumber = vidno === 'vid1' ? 'Room 101' : 'Room 102'; 
+
+        fetch('/upload_frame', {
+            method: 'POST',
+            headers: {
+            'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ frame_data: frameImageData }),
+        })
+        .then(response => {
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+        return response.json();
+        })
+        .then(data => {
+            console.log(data);
+            if (data && data.status === 'success') {
+                console.log("Prediction result:", data);
+                updatePredictionResult(data.predicted_class, data.confidence, data.probabilities, vidno); 
+                const currentTime = new Date();
+                const threshold = 90000; 
+
+            if (data.predicted_class === 'Violence') {
+                if (vidno === 'vid1'){
+                    consectiveViolenceFrames1++; 
+                }
+               else{
+                    consectiveViolenceFrames2++;
+                }
+                if (consectiveViolenceFrames1 >= 5 || consectiveViolenceFrames2 >= 5) {
+                    warningSound.play();
+                    document.getElementById('alertBox').style.display = 'block';
+                    if (!lastAlertTime[vidno] || (currentTime - lastAlertTime[vidno]) >= threshold) {
+                        uploadData(frameImageData, roomNumber, currentTime);
+                        document.getElementById('roomNumberDetected').innerText = roomNumber;
+                        lastAlertTime[vidno] = currentTime;
+                }
+                }
+            } else {
+                if (vidno === 'vid1'){
+                    consectiveViolenceFrames1 = 0; 
+                }
+                else{
+                    consectiveViolenceFrames2 = 0;
+                }
+            }
+        } else {
+            console.error('Error:', data);
+        }
+    })
+        .catch(error => {
+        console.error('Error:', error);
+        });
+    }
+
+    function uploadData(frameImageData, roomNumber, timestamp) {
+    fetch('/upload', {
+        method: 'POST',
+        headers: {
+        'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+        frame_data: frameImageData,
+        room_number: roomNumber,
+        time: timestamp.toLocaleDateString('en-GB', {
+            day: '2-digit',
+            month: '2-digit',
+            year: 'numeric'
+        }).replace(/\//g, '_') + ' ' +
+            timestamp.toLocaleTimeString('en-US', {
+            hour12: false,
+            hour: '2-digit',
+            minute: '2-digit',
+            second: '2-digit'
+            })
+        }),
+    })
+        .then(response => {
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+        return response.json();
+        })
+        .then(data => {
+        console.log('Data uploaded successfully:', data);
+        })
+        .catch(error => {
+        console.error('Error uploading data:', error);
+        });
+}
+
+        function updatePredictionResult(predictedClass, confidence, probabilities,vidno) {
+        
+            if(vidno == 'vid1')
+            {
+                document.getElementById('predictedClass').innerText = predictedClass;
+                document.getElementById('confidence').innerText = confidence.toFixed(2);
+                const videoPlayer = document.getElementById('videoPlayer');
+                if (predictedClass === 'Violence') {
+                    videoPlayer.style.border = '3px solid red'; // Change border to red
+                } else {
+                    videoPlayer.style.border = '3px solid green'; // Change border to green for non-violence
+                }
+            }
+            else
+            {
+                document.getElementById('predictedClass2').innerText = predictedClass;
+                document.getElementById('confidence2').innerText = confidence.toFixed(2);
+                const videoPlayer = document.getElementById('videoPlayer2');
+                if (predictedClass === 'Violence') {
+                    videoPlayer.style.border = '3px solid red'; // Change border to red
+                } else {
+                    videoPlayer.style.border = '3px solid green'; // Change border to green for non-violence
+                }
+            }
+        }
+        function closeAlertBox() {
+            document.getElementById('alertBox').style.display = 'none';
+            warningSound.pause();
+            warningSound.currentTime = 0;
+        }
+    </script>
+</body>
+
+</html>

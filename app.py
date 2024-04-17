@@ -10,8 +10,12 @@ from collections import deque
 from dotenv import load_dotenv
 import firebase_admin
 import os
-
+import requests
+import telepot
 from firebase_admin import credentials, storage, db
+from datetime import datetime
+
+load_dotenv()
 
 UPLOAD_FOLDER = 'static/uploads'
 cred = credentials.Certificate("credentials.json")
@@ -42,6 +46,23 @@ print('Model loaded. Check http://')
 
 # Set the threshold for the number of frames before prediction
 FRAME_THRESHOLD = 16
+
+TELEGRAM_BOT_TOKEN = os.getenv('TELEGRAM_BOT_TOKEN')
+CHAT_ID = os.getenv('CHAT_ID')
+
+def send_telegram_message(message, image_path=None):
+  try:
+    bot = telepot.Bot(TELEGRAM_BOT_TOKEN)
+    if image_path:
+      with open(image_path, 'rb') as photo_file:
+        bot.sendPhoto(CHAT_ID, photo_file, caption=message)
+    else:
+      bot.sendMessage(CHAT_ID,message)
+
+    print(f"Telegram notification sent: {message}")
+  except Exception as e:
+    print(f"Error sending Telegram notification: {e}")
+
 
 # Use deque to store frames
 frames_deque = deque(maxlen=FRAME_THRESHOLD)
@@ -145,7 +166,9 @@ def upload_image():
 
     with open(image_path, 'wb') as f:
         f.write(image_data)
-
+    
+    message = f"ALERT: Potential Violence Detected in {room_number} at {time}.!!"
+    send_telegram_message(message, image_path=image_path)
 
     try:
         bucket = storage.bucket()
